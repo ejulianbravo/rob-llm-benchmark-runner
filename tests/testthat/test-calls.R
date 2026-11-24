@@ -7,10 +7,11 @@ withr::local_envvar(ANTHROPIC_API_KEY = "test-a", OPENAI_API_KEY = "test-o", GEM
 body_of <- function(req) req$body$data
 build <- function(m, pdf) do.call(build_request, c(list(m, pdf_path = pdf), call_args))
 
-test_that("Anthropic request: manuals, then cached prompt, PDF, target", {
+test_that("Anthropic request: manual PDFs, then cached prompt, study PDF, target", {
   b <- body_of(build(models$claude, make_pdf()))
   content <- b$messages[[1]]$content
   expect_equal(vapply(content, `[[`, "", "type"), c("document", "document", "text", "document", "text"))
+  expect_equal(content[[1]]$source$media_type, "application/pdf")
   expect_equal(content[[3]]$cache_control$type, "ephemeral")
   expect_null(content[[2]]$cache_control)
   expect_equal(content[[4]]$source$media_type, "application/pdf")
@@ -22,13 +23,16 @@ test_that("OpenAI request: Responses API, store = FALSE, PDF as input_file", {
   b <- body_of(req)
   expect_match(req$url, "/v1/responses$")
   expect_false(b$store)
-  expect_match(b$input[[1]]$content[[4]]$file_data, "^data:application/pdf;base64,")
+  types <- vapply(b$input[[1]]$content, `[[`, "", "type")
+  expect_equal(types, c("input_file", "input_file", "input_text", "input_file", "input_text"))
+  expect_match(b$input[[1]]$content[[1]]$file_data, "^data:application/pdf;base64,")
 })
 
 test_that("Google request: params go in generationConfig, PDF inline", {
   m <- models$gemini; m$params <- list(temperature = 0)
   b <- body_of(build(m, make_pdf()))
   expect_equal(b$generationConfig$temperature, 0)
+  expect_equal(b$contents[[1]]$parts[[1]]$inlineData$mimeType, "application/pdf")
   expect_equal(b$contents[[1]]$parts[[4]]$inlineData$mimeType, "application/pdf")
 })
 

@@ -20,5 +20,6 @@ mock_json <- function(body, status = 200) {
                   body = charToRaw(as.character(jsonlite::toJSON(body, auto_unbox = TRUE))))
 }
 
-call_args <- list(system = "SYSTEM", manuals = c(m1 = "MANUAL ONE", m2 = "MANUAL TWO"),
+call_args <- list(system = "SYSTEM",
+                  manuals = c(m1 = make_pdf("MANUAL ONE"), m2 = make_pdf("MANUAL TWO")),
                   instrument_prompt = "PROMPT", target = "TARGET")

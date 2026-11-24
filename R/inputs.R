@@ -25,29 +25,22 @@ study_pdf <- function(dataset_dir, instrument, study) {
   path
 }
 
-# The manuals for one instrument, in manifest order, as a named character vector.
-# Each text file must match the text_sha256 recorded in the manifest. A manual
-# whose text has not been checked (checked_by empty) is refused unless
-# allow_unchecked = TRUE, which is for development runs only.
-load_manuals <- function(instrument, manuals_dir, manifest_file = "manuals/manifest.csv",
-                         allow_unchecked = FALSE) {
+# The manuals for one instrument, in manifest order: a named vector of PDF
+# paths (names = doc_id). Each PDF must match pdf_sha256 in the manifest, so
+# every call gets exactly the official file recorded there.
+load_manuals <- function(instrument, manuals_dir, manifest_file = "manuals/manifest.csv") {
   m <- utils::read.csv(manifest_file, stringsAsFactors = FALSE, na.strings = "", encoding = "UTF-8")
   m <- m[m$instrument == instrument, , drop = FALSE]
   if (nrow(m) == 0) stop("No manuals listed for ", instrument, call. = FALSE)
   m <- m[order(m$order), , drop = FALSE]
-  texts <- vapply(seq_len(nrow(m)), function(i) {
-    path <- file.path(manuals_dir, m$text_file[i])
-    if (!file.exists(path)) stop("Manual text not found: ", path, call. = FALSE)
-    if (is.na(m$checked_by[i]) && !allow_unchecked) {
-      stop("Manual text not yet checked: ", m$doc_id[i], call. = FALSE)
+  paths <- file.path(manuals_dir, m$pdf_file)
+  for (i in seq_along(paths)) {
+    if (!file.exists(paths[i])) stop("Manual PDF not found: ", paths[i], call. = FALSE)
+    if (!identical(sha256_file(paths[i]), m$pdf_sha256[i])) {
+      stop("Manual PDF hash does not match the manifest: ", m$doc_id[i], call. = FALSE)
     }
-    txt <- paste(readLines(path, encoding = "UTF-8", warn = FALSE), collapse = "\n")
-    if (!is.na(m$text_sha256[i]) && !identical(sha256_text(txt), m$text_sha256[i])) {
-      stop("Manual text hash does not match the manifest: ", m$doc_id[i], call. = FALSE)
-    }
-    txt
-  }, "")
-  stats::setNames(texts, m$doc_id)
+  }
+  stats::setNames(paths, m$doc_id)
 }
 
 # System instructions and the instrument prompt, with the output format filled in

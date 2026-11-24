@@ -24,9 +24,13 @@ make_dev_set <- function(dir) {
                               fulltext_sha256 = sha256_file(pdf)),
                    file.path(dir, "data", "rob2", "studies_rob2.csv"), row.names = FALSE)
   man <- file.path(dir, "manuals"); dir.create(man)
-  writeLines("guidance text", file.path(man, "rob2_guidance.txt"))
-  writeLines("cribsheet text", file.path(man, "rob2_cribsheet.txt"))
-  list(dataset_dir = dir, dev_dir = dir, manuals_dir = man)
+  g <- file.path(man, "g.pdf"); c2 <- file.path(man, "c.pdf")
+  file.copy(make_pdf(c("guidance p1", "guidance p2")), g); file.copy(make_pdf("cribsheet"), c2)
+  manifest <- file.path(dir, "manifest.csv")
+  utils::write.csv(data.frame(instrument = "rob2", order = 1:2, doc_id = c("g", "c"),
+                              pdf_file = c("g.pdf", "c.pdf"), pdf_sha256 = c(sha256_file(g), sha256_file(c2))),
+                   manifest, row.names = FALSE)
+  list(dataset_dir = dir, dev_dir = dir, manuals_dir = man, manifest_file = manifest)
 }
 
 test_that("Batch: dry run plans and estimates; benchmark set refused with draft prompts", {
@@ -35,7 +39,8 @@ test_that("Batch: dry run plans and estimates; benchmark set refused with draft 
   plan <- run_batch("rob2", runs = 1:2, set = "development", paths = paths, out_dir = out)
   expect_equal(nrow(plan), 6)                 # 1 study x 3 models x 2 runs
   expect_true(all(plan$est_usd > 0))
-  expect_error(run_batch("rob2", set = "benchmark", paths = paths, out_dir = out), "not yet checked|not frozen")
+  expect_true(all(plan$manual_pages == 3))
+  expect_error(run_batch("rob2", set = "benchmark", paths = paths, out_dir = out), "not frozen")
   expect_error(run_batch("rob2", set = "development", paths = paths, out_dir = out,
                          dry_run = FALSE, approved_budget_usd = 0), "above the approved budget")
 })
@@ -138,4 +143,16 @@ test_that("Quotation check: page match, other page, not found, no text layer", {
   blank <- make_pdf(c("", ""))
   expect_equal(check_quotes(q[1, ], function(id) blank, min_chars_per_page = 10)$quote_check, "no_text_layer")
   expect_equal(check_quotes(q[1, ], function(id) pdf)$quote_check, "no_text_layer")  # default threshold: short test pages count as no text
+})
+
+test_that("Manual PDFs must match the manifest hash", {
+  paths <- make_dev_set(withr::local_tempdir())
+  file.copy(make_pdf("changed"), file.path(paths$manuals_dir, "c.pdf"), overwrite = TRUE)
+  expect_error(load_manuals("rob2", paths$manuals_dir, paths$manifest_file), "does not match")
+})
+
+test_that("The repo manifest lists PDFs for every instrument", {
+  m <- utils::read.csv(file.path(root, "manuals", "manifest.csv"))
+  expect_setequal(unique(m$instrument), INSTRUMENTS)
+  expect_true(all(nchar(m$pdf_sha256) == 64))
 })

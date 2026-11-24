@@ -2,7 +2,7 @@
 #
 # Every request carries, in this order:
 #   1. system instructions (same for every call)
-#   2. the instrument's manuals as text (same for every study of that instrument)
+#   2. the instrument's manuals as PDF files (same for every study of that instrument)
 #   3. the instrument prompt: task and output format (same for every study of that instrument)
 #   4. the study report as a PDF file
 #   5. the assessment target for this study
@@ -25,9 +25,9 @@ FIXED_SETTINGS <- list(
 # placeholder is used so no real key is held in the returned object.
 build_request <- function(model, system, manuals, instrument_prompt, pdf_path, target,
                           key = api_key(model$api_key_env)) {
-  stopifnot(is.character(manuals), length(manuals) >= 1, file.exists(pdf_path))
+  stopifnot(is.character(manuals), length(manuals) >= 1, all(file.exists(manuals)), file.exists(pdf_path))
   if (is.null(key)) key <- "DRY-RUN-NO-KEY"
-  manuals <- unname(manuals)  # names would turn the JSON array into an object
+  manuals <- unname(manuals)  # paths; names would turn the JSON array into an object
   builder <- switch(model$provider,
     anthropic = build_request_anthropic,
     openai    = build_request_openai,
@@ -38,9 +38,9 @@ build_request <- function(model, system, manuals, instrument_prompt, pdf_path, t
 }
 
 build_request_anthropic <- function(model, system, manuals, instrument_prompt, pdf_path, target, key) {
-  manual_blocks <- lapply(manuals, function(txt) {
+  manual_blocks <- lapply(manuals, function(path) {
     list(type = "document",
-         source = list(type = "text", media_type = "text/plain", data = txt))
+         source = list(type = "base64", media_type = "application/pdf", data = b64_file(path)))
   })
   prompt_block <- list(type = "text", text = instrument_prompt)
   if (isTRUE(model$cache_manuals)) {
@@ -75,7 +75,10 @@ build_request_anthropic <- function(model, system, manuals, instrument_prompt, p
 }
 
 build_request_openai <- function(model, system, manuals, instrument_prompt, pdf_path, target, key) {
-  manual_parts <- lapply(manuals, function(txt) list(type = "input_text", text = txt))
+  manual_parts <- lapply(manuals, function(path) {
+    list(type = "input_file", filename = basename(path),
+         file_data = paste0("data:application/pdf;base64,", b64_file(path)))
+  })
   content <- c(
     manual_parts,
     list(
@@ -100,7 +103,9 @@ build_request_openai <- function(model, system, manuals, instrument_prompt, pdf_
 }
 
 build_request_google <- function(model, system, manuals, instrument_prompt, pdf_path, target, key) {
-  manual_parts <- lapply(manuals, function(txt) list(text = txt))
+  manual_parts <- lapply(manuals, function(path) {
+    list(inlineData = list(mimeType = "application/pdf", data = b64_file(path)))
+  })
   parts <- c(
     manual_parts,
     list(

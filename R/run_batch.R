@@ -1,10 +1,11 @@
 # Run (or estimate) a batch of calls for one instrument.
 #
 #   set = "development": studies outside the benchmark (paths$dev_dir, same
-#         folder layout as the frozen dataset). Draft prompts and unchecked
-#         manual texts are allowed. Use this for prompt work and the cost test.
+#         folder layout as the frozen dataset). Draft prompts are allowed. Use
+#         this for prompt work and the cost test.
 #   set = "benchmark":   the frozen benchmark (paths$dataset_dir). Refused
-#         unless the prompts are marked frozen and every manual text is checked.
+#         unless the prompts are marked frozen.
+# In both sets the manual PDFs must match the hashes in manuals/manifest.csv.
 #
 # Nothing is sent unless dry_run = FALSE AND approved_budget_usd is at least the
 # estimated cost of the calls still to make. With dry_run = TRUE (the default)
@@ -37,7 +38,8 @@ run_batch <- function(instrument, model_labels = NULL, runs = 1:2,
   if (is.null(data_dir)) stop("No folder set for ", set, " in config/paths.yaml", call. = FALSE)
 
   prompts <- load_prompts(instrument)
-  manuals <- load_manuals(instrument, paths$manuals_dir, allow_unchecked = (set == "development"))
+  manuals <- load_manuals(instrument, paths$manuals_dir,
+                          manifest_file = paths$manifest_file %||% "manuals/manifest.csv")
   if (set == "benchmark" && !prompts$frozen) {
     stop("Prompts are not frozen; benchmark runs are refused.", call. = FALSE)
   }

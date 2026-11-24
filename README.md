@@ -9,7 +9,7 @@ Status: in development. Prompts are drafts. Nothing has been sent to a model API
 One request per study, model and run, in this order:
 
 1. system instructions (`prompts/system.txt`);
-2. the instrument's full official guidance and assessment form, as checked text (`manuals/manifest.csv`);
+2. the instrument's full official guidance and assessment form, as the official PDF files (hash-checked against `manuals/manifest.csv`);
 3. the instrument prompt with its output format (`prompts/<instrument>.txt`, `prompts/specs/<instrument>.json`);
 4. the study report as a PDF file (the frozen benchmark copy, hash-checked);
 5. the assessment target from the frozen benchmark.
@@ -22,7 +22,7 @@ The model returns one JSON object: for each domain (or NOS item), quotations wit
 
 - `outputs/raw/`: every successful response body, unchanged, written before anything reads it. Never overwritten; a run number is used up once a response is stored.
 - `outputs/errors/`: bodies of HTTP errors after retries (rate limits, server errors). These are not model outputs; the same run number can be tried again.
-- `outputs/run_log.csv`: one row per call: study, model requested and returned, run, prompt version, all settings, hashes of PDF, each manual, prompt and target, request size, timing, status, tokens (one definition for all providers, see `R/responses.R`) and the provider's own usage record.
+- `outputs/run_log.csv`: one row per call: study, model requested and returned, run, prompt version, all settings, hashes of the study PDF, each manual PDF, prompt and target, request size, timing, status, tokens (one definition for all providers, see `R/responses.R`) and the provider's own usage record.
 
 Unusable answers are kept and logged. Nothing is repaired or re-asked.
 
@@ -44,9 +44,9 @@ res$tables$rob2
 quotes <- check_quotes(res$quotes, function(id) file.path(dev_dir, "fulltexts", "rob2", paste0(id, ".pdf")))
 ```
 
-Benchmark runs (`set = "benchmark"`) are refused until the prompts are marked `status: frozen` and every manual text has been checked (`scripts/mark_checked.R`).
+Benchmark runs (`set = "benchmark"`) are refused until the prompts are marked `status: frozen`. Manual PDFs must match the hashes in `manuals/manifest.csv`.
 
-Setup: copy `config/paths.example.yaml` to `config/paths.yaml` and set your folders. Put API keys in `~/.Renviron` (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`), never in the repo. Make the manual texts with `Rscript scripts/extract_manuals.R <manuals folder>`, check each against its PDF, then record it with `scripts/mark_checked.R`.
+Setup: copy `config/paths.example.yaml` to `config/paths.yaml` and set your folders. Put API keys in `~/.Renviron` (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`), never in the repo. Put the manual PDFs (named as in `manuals/manifest.csv`) in your `manuals_dir`. Poppler's `pdftotext` is needed for the quotation check (Mac: `brew install poppler`).
 
 Tests: `Rscript -e 'testthat::test_dir("tests/testthat")'`
 
@@ -58,7 +58,6 @@ parse/      raw outputs -> assessment tables; quotation check
 prompts/    system prompt, one prompt per instrument, specs (question IDs, allowed values)
 config/     models (IDs, settings, prices) and local paths (paths.yaml, not committed)
 manuals/    manifest only (citation, edition, URL, hashes); documents not committed
-scripts/    manual text extraction and check recording
 tests/      offline tests
 concept/    the original concept notebook (tag v0.1-concept)
 ```

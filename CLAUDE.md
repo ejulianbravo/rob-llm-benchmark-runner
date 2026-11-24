@@ -17,7 +17,7 @@ This repo runs large language models on the LLM risk-of-bias benchmark (150 stud
 
 - R with `httr2`. Started from the concept notebook in `concept/` (tag `v0.1-concept`).
 - One call per study, model and run. Two runs per study per model; run 1 is primary.
-- Each call contains, in this order: system instructions; the instrument's full official guidance and official assessment form as checked text; the instrument prompt (task and output format); the study PDF as a file; the assessment target from the frozen benchmark. No worked examples, no retrieval.
+- Each call contains, in this order: system instructions; the instrument's full official guidance and official assessment form as the official PDF files (hash-checked); the instrument prompt (task and output format); the study PDF as a file; the assessment target from the frozen benchmark. No worked examples, no retrieval.
   - RoB 2: full guidance (22 Aug 2019) + cribsheet. ROBINS-I: detailed guidance (2016) + tool (2016). ROBINS-E: full version (24 Mar 2024). NOS: coding manual + scale (OHRI). PROBAST: Wolff et al. 2019 + Moons et al. 2019.
   - RoB 2 variant: individually randomised parallel-group trials.
 - The instrument and target are fixed by the frozen benchmark. The model does not classify the design or choose the instrument.
@@ -35,8 +35,8 @@ Run tests: `Rscript -e 'testthat::test_dir("tests/testthat")'`
 ## Next steps
 
 1. Edward reviews the runner and the draft prompts.
-2. Decisions open (see the decision log): storing HTTP errors apart from outputs; timeout vs streaming or the providers' batch APIs; effect of interest when the target does not state it; NOS review criteria; directions of bias.
-3. Manual texts extracted, checked against the PDFs and recorded (`scripts/`).
+2. Settled since: see decision log D142, D143, D144.
+3. Manual PDFs in `manuals_dir`, matching the manifest hashes.
 4. Development studies outside the benchmark (`dev_dir`), for prompt work and the cost test.
 5. Cost test on development PDFs, after Edward approves the spend; then replace the cost assumptions in `config/models.yaml` and fix model IDs.
 6. Freeze prompts (`status: frozen`), register, then benchmark runs.
