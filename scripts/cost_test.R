@@ -1,15 +1,17 @@
 # Cost test: one development study per instrument, all models, run 1 only.
 # Approved by Edward on 2026-11-23 for up to US$30 in total (decision log D146).
 #
-# Usage, from the repo folder:
-#   Rscript scripts/cost_test.R          # plan and estimate only, sends nothing
-#   Rscript scripts/cost_test.R --run    # send the calls, if the estimate is within the budget
+# Usage, from the repo folder (working directory = the repo):
+#   Terminal:  Rscript scripts/cost_test.R          # plan and estimate only, sends nothing
+#              Rscript scripts/cost_test.R --run    # send the calls, if within the budget
+#   RStudio:   source("scripts/cost_test.R")        # plan only
+#              options(cost_test.run = TRUE); source("scripts/cost_test.R")   # send
 #
 # Needs config/paths.yaml (dev_dir set) and the API keys in ~/.Renviron.
 
 for (f in c(list.files("R", full.names = TRUE), list.files("parse", full.names = TRUE))) source(f)
 budget_usd <- 30
-send <- "--run" %in% commandArgs(trailingOnly = TRUE)
+send <- "--run" %in% commandArgs(trailingOnly = TRUE) || isTRUE(getOption("cost_test.run"))
 
 plans <- lapply(INSTRUMENTS, function(i) run_batch(i, runs = 1, set = "development", dry_run = TRUE))
 plan <- do.call(rbind, plans)
@@ -17,8 +19,11 @@ print(plan[, c("model_label", "study_id", "pdf_pages", "manual_pages", "est_inpu
 total <- sum(plan$est_usd)
 message(sprintf("Total estimate: US$%.2f for %d calls (budget US$%.0f).", total, nrow(plan), budget_usd))
 
-if (!send) quit(save = "no")
+if (!send) {
+  message("Plan only. Nothing sent.")
+} else {
 if (total > budget_usd) stop("Estimate above budget; nothing sent.")
+options(cost_test.run = NULL)  # one approval per run
 for (i in INSTRUMENTS) {
   run_batch(i, runs = 1, set = "development", dry_run = FALSE, approved_budget_usd = budget_usd)
 }
@@ -35,3 +40,4 @@ price_out <- vapply(log$model_label, function(l) models[[l]]$price_output_usd_pe
 log$usd <- round(log$input_tokens / 1e6 * price_in + log$output_tokens / 1e6 * price_out, 3)
 print(log[, c("call_id", "usd")], row.names = FALSE)
 message(sprintf("Actual (from returned tokens, list prices): US$%.2f", sum(log$usd, na.rm = TRUE)))
+}
