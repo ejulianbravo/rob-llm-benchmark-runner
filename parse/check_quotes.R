@@ -1,7 +1,7 @@
 # Check each quotation against the text of the PDF the model received.
 #
-# The text is extracted with pdftools, so the check depends on the PDF's text
-# layer. Results:
+# The text is extracted in reading order with poppler's pdftotext
+# (pdf_pages_text() in R/utils.R), so the check depends on the PDF's text layer. Results:
 #   match_on_page    quote found on the page the model gave
 #   match_other_page quote found, but on another page
 #   not_found        quote not found anywhere in the extracted text
@@ -28,7 +28,7 @@ check_quotes <- function(quotes, pdf_for_study, min_chars_per_page = 300) {
   if (!nrow(quotes)) return(quotes)
   quotes$quote_check <- NA_character_
   for (sid in unique(quotes$study_id)) {
-    pages <- normalise_text(pdftools::pdf_text(pdf_for_study(sid)))
+    pages <- normalise_text(pdf_pages_text(pdf_for_study(sid)))
     no_text <- mean(nchar(pages)) < min_chars_per_page
     idx <- which(quotes$study_id == sid)
     for (i in idx) {

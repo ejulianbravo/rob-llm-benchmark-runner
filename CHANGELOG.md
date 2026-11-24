@@ -18,6 +18,7 @@ All changes to the runner are recorded here. Versions are git tags.
 - Quotation check (`parse/check_quotes.R`) against text extracted from the same PDF.
 - Changes after review: HTTP error bodies go to `outputs/errors/` and do not use up the run number; token columns have one definition across providers, with the provider's usage record kept; Google prompt blocks recorded as finish reason; settings fixed in code recorded in the log; cache breakpoint moved after the instrument prompt; a hash per manual; raw file names include the model ID; lock per call; dry runs need no key; request size checked before sending; timeout default 1800 s.
 - NOS: the model states the choices the scale leaves to reviewers (comparability factors, follow-up length, adequate follow-up) in `review_choices`; the source reviews' own definitions are not sent.
+- PDF text now extracted in reading order with poppler's pdftotext (`pdf_pages_text()`), for the manuals and the quotation check; pdftools kept the page layout and mixed the lines of two-column pages.
 - Fixed: named manual vectors were serialised as a JSON object instead of an array.
 
 ## v0.1-concept (9 Dec 2025)

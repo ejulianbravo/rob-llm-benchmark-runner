@@ -6,7 +6,8 @@
 # The folder must hold the PDFs named in manuals/manifest.csv (pdf_file). For
 # each one this script:
 #   1. checks the PDF against pdf_sha256 in the manifest;
-#   2. extracts its text with pdftools (page breaks marked "[Page n]");
+#   2. extracts its text in reading order with poppler's pdftotext (page breaks
+#      marked "[Page n]"; needs poppler: on a Mac, `brew install poppler`);
 #   3. writes the text file next to the PDF and records its SHA-256 in the manifest.
 # It does not fill checked_by / checked_date: a person must read each text file
 # against its PDF (tables and algorithms in particular), correct it by hand if
@@ -28,7 +29,7 @@ for (i in seq_len(nrow(m))) {
   }
   out <- file.path(manuals_dir, m$text_file[i])
   if (file.exists(out)) { message("Text exists, not overwritten: ", out); next }
-  pages <- pdftools::pdf_text(pdf)
+  pages <- pdf_pages_text(pdf)
   txt <- paste(sprintf("[Page %d]\n%s", seq_along(pages), pages), collapse = "\n")
   writeLines(txt, out, useBytes = TRUE)
   message("Wrote ", out)
