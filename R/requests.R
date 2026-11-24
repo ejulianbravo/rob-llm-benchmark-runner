@@ -11,33 +11,47 @@
 #
 # `model` is one entry of config/models.yaml. `params` from that entry are added
 # to the request unchanged (top level for Anthropic and OpenAI; inside
-# generationConfig for Google), so settings such as temperature or reasoning effort
-# are set per model in the config, not in code.
+# generationConfig for Google). Settings fixed in code are listed in
+# FIXED_SETTINGS so the run log can record them.
 
-build_request <- function(model, system, manuals, instrument_prompt, pdf_path, target) {
+FIXED_SETTINGS <- list(
+  anthropic = list(endpoint = "https://api.anthropic.com/v1/messages",
+                   anthropic_version = "2023-06-01"),
+  openai    = list(endpoint = "https://api.openai.com/v1/responses", store = FALSE),
+  google    = list(endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent")
+)
+
+# `key` may be NULL only when the request will not be sent (dry run); a
+# placeholder is used so no real key is held in the returned object.
+build_request <- function(model, system, manuals, instrument_prompt, pdf_path, target,
+                          key = api_key(model$api_key_env)) {
   stopifnot(is.character(manuals), length(manuals) >= 1, file.exists(pdf_path))
+  if (is.null(key)) key <- "DRY-RUN-NO-KEY"
+  manuals <- unname(manuals)  # names would turn the JSON array into an object
   builder <- switch(model$provider,
     anthropic = build_request_anthropic,
     openai    = build_request_openai,
     google    = build_request_google,
     stop("Unknown provider: ", model$provider, call. = FALSE)
   )
-  builder(model, system, manuals, instrument_prompt, pdf_path, target)
+  builder(model, system, manuals, instrument_prompt, pdf_path, target, key)
 }
 
-build_request_anthropic <- function(model, system, manuals, instrument_prompt, pdf_path, target) {
+build_request_anthropic <- function(model, system, manuals, instrument_prompt, pdf_path, target, key) {
   manual_blocks <- lapply(manuals, function(txt) {
     list(type = "document",
          source = list(type = "text", media_type = "text/plain", data = txt))
   })
+  prompt_block <- list(type = "text", text = instrument_prompt)
   if (isTRUE(model$cache_manuals)) {
-    # Cache everything up to and including the last manual block.
-    manual_blocks[[length(manual_blocks)]]$cache_control <- list(type = "ephemeral")
+    # One cache breakpoint after the instrument prompt: system, manuals and
+    # prompt are identical for every study of an instrument.
+    prompt_block$cache_control <- list(type = "ephemeral")
   }
   content <- c(
     manual_blocks,
     list(
-      list(type = "text", text = instrument_prompt),
+      prompt_block,
       list(type = "document",
            source = list(type = "base64", media_type = "application/pdf",
                          data = b64_file(pdf_path))),
@@ -51,16 +65,16 @@ build_request_anthropic <- function(model, system, manuals, instrument_prompt, p
          messages = list(list(role = "user", content = content))),
     model$params
   )
-  httr2::request("https://api.anthropic.com/v1/messages") |>
+  httr2::request(FIXED_SETTINGS$anthropic$endpoint) |>
     httr2::req_headers(
-      `x-api-key` = api_key(model$api_key_env),
-      `anthropic-version` = "2023-06-01",
+      `x-api-key` = key,
+      `anthropic-version` = FIXED_SETTINGS$anthropic$anthropic_version,
       .redact = "x-api-key"
     ) |>
     httr2::req_body_json(body, auto_unbox = TRUE)
 }
 
-build_request_openai <- function(model, system, manuals, instrument_prompt, pdf_path, target) {
+build_request_openai <- function(model, system, manuals, instrument_prompt, pdf_path, target, key) {
   manual_parts <- lapply(manuals, function(txt) list(type = "input_text", text = txt))
   content <- c(
     manual_parts,
@@ -77,15 +91,15 @@ build_request_openai <- function(model, system, manuals, instrument_prompt, pdf_
          instructions = system,
          input = list(list(role = "user", content = content)),
          max_output_tokens = model$max_output_tokens,
-         store = FALSE),
+         store = FIXED_SETTINGS$openai$store),
     model$params
   )
-  httr2::request("https://api.openai.com/v1/responses") |>
-    httr2::req_auth_bearer_token(api_key(model$api_key_env)) |>
+  httr2::request(FIXED_SETTINGS$openai$endpoint) |>
+    httr2::req_auth_bearer_token(key) |>
     httr2::req_body_json(body, auto_unbox = TRUE)
 }
 
-build_request_google <- function(model, system, manuals, instrument_prompt, pdf_path, target) {
+build_request_google <- function(model, system, manuals, instrument_prompt, pdf_path, target, key) {
   manual_parts <- lapply(manuals, function(txt) list(text = txt))
   parts <- c(
     manual_parts,
@@ -101,9 +115,14 @@ build_request_google <- function(model, system, manuals, instrument_prompt, pdf_
     contents = list(list(role = "user", parts = parts)),
     generationConfig = generation_config
   )
-  url <- sprintf("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent",
-                 model$model_id)
+  url <- sub("{model}", model$model_id, FIXED_SETTINGS$google$endpoint, fixed = TRUE)
   httr2::request(url) |>
-    httr2::req_headers(`x-goog-api-key` = api_key(model$api_key_env), .redact = "x-goog-api-key") |>
+    httr2::req_headers(`x-goog-api-key` = key, .redact = "x-goog-api-key") |>
     httr2::req_body_json(body, auto_unbox = TRUE)
+}
+
+# Size of the JSON body in MB, to compare with the provider's request limit
+# (model$max_request_mb in the config) before sending.
+request_size_mb <- function(req) {
+  length(charToRaw(jsonlite::toJSON(req$body$data, auto_unbox = TRUE))) / 1024^2
 }

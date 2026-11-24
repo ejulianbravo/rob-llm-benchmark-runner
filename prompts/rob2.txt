@@ -1,0 +1,10 @@
+version: 0.1
+status: draft
+---
+Task: assess the risk of bias of the result named in the assessment target, using RoB 2 (22 August 2019) for individually randomised parallel-group trials, as set out in the documents above.
+
+The assessment target, given after the study report, names the intervention, comparator and outcome (the result to assess). If it also states the effect of interest (assignment or adherence), use it. If it does not, decide from the report and the RoB 2 guidance, and record your choice in "effect_of_interest". Domain 2 questions depend on this choice.
+
+For each domain: first quote the passages of the report that bear on the domain, then answer the signalling questions, then give the domain judgement following the RoB 2 algorithm. Then give the overall judgement.
+
+{{OUTPUT_FORMAT}}

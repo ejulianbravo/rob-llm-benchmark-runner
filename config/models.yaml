@@ -1,9 +1,16 @@
-# One entry per model. PROVISIONAL: model IDs and settings are fixed in the
-# registered protocol after the cost test (decision log D123).
+# One entry per model. PROVISIONAL: model IDs, settings and prices are fixed in
+# the registered protocol after the cost test (decision log D123).
 #
 # params are sent unchanged: top level for Anthropic and OpenAI, inside
 # generationConfig for Google. Leave out any parameter a model does not accept
 # (e.g. temperature for claude-fable-5-2).
+#
+# Cost estimate fields (used only by R/estimate_cost.R, never sent):
+#   price_*_usd_per_m       list price per million tokens (checked 2026-11-20, D123)
+#   pdf_tokens_per_page     ASSUMPTION until measured in the cost test
+#   expected_output_tokens  ASSUMPTION until measured in the cost test
+# max_request_mb: refuse to send a request larger than this. ASSUMPTION: check
+# each provider's current limit.
 
 models:
   - label: claude
@@ -11,19 +18,37 @@ models:
     model_id: claude-fable-5-2
     api_key_env: ANTHROPIC_API_KEY
     max_output_tokens: 32000
+    timeout_s: 1800
     cache_manuals: true
     params: {}
+    price_input_usd_per_m: 8
+    price_output_usd_per_m: 40
+    pdf_tokens_per_page: 2500
+    expected_output_tokens: 8000
+    max_request_mb: 32
 
   - label: gpt
     provider: openai
     model_id: gpt-6.2-astra
     api_key_env: OPENAI_API_KEY
     max_output_tokens: 32000
+    timeout_s: 1800
     params: {}
+    price_input_usd_per_m: 8
+    price_output_usd_per_m: 40
+    pdf_tokens_per_page: 2500
+    expected_output_tokens: 8000
+    max_request_mb: 50
 
   - label: gemini
     provider: google
     model_id: gemini-4-argon
     api_key_env: GEMINI_API_KEY
     max_output_tokens: 32000
+    timeout_s: 1800
     params: {}
+    price_input_usd_per_m: 4
+    price_output_usd_per_m: 20
+    pdf_tokens_per_page: 600
+    expected_output_tokens: 8000
+    max_request_mb: 20

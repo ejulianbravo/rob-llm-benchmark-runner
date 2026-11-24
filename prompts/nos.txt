@@ -1,0 +1,10 @@
+version: 0.1
+status: draft
+---
+Task: assess the study named in the assessment target with the original Newcastle-Ottawa Scale, using the form (cohort or case-control) stated in the target, as set out in the documents above.
+
+The assessment target, given after the study report, names the comparison and the outcome (cohort form) or exposure (case-control form) to assess.
+
+For each item: first quote the passages of the report that bear on the item, then give the number of stars the scale awards. Do not give a total or an overall rating.
+
+{{OUTPUT_FORMAT}}

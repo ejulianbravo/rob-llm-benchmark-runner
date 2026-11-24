@@ -1,0 +1,10 @@
+version: 0.1
+status: draft
+---
+Task: assess the risk of bias of the result named in the assessment target, using the original ROBINS-I (2016), as set out in the documents above.
+
+The assessment target, given after the study report, names the intervention, comparator and outcome (the result to assess). If it also states the effect of interest (assignment to intervention, or adhering to intervention), use it. If it does not, decide from the report and the ROBINS-I guidance, and record your choice in "effect_of_interest".
+
+For each of the 7 domains: first quote the passages of the report that bear on the domain, then answer the signalling questions, then give the domain judgement following the ROBINS-I guidance. Then give the overall judgement.
+
+{{OUTPUT_FORMAT}}

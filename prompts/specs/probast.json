@@ -1,0 +1,80 @@
+{
+ "instrument": "probast",
+ "name": "PROBAST (2019)",
+ "answer_options": [
+  "Y",
+  "PY",
+  "PN",
+  "N",
+  "NI"
+ ],
+ "judgement_options": [
+  "Low",
+  "High",
+  "Unclear"
+ ],
+ "overall_options": [
+  "Low",
+  "High",
+  "Unclear"
+ ],
+ "top_fields": {},
+ "applicability": {
+  "domains": [
+   "D1",
+   "D2",
+   "D3"
+  ],
+  "options": [
+   "Low",
+   "High",
+   "Unclear"
+  ]
+ },
+ "domains": [
+  {
+   "id": "D1",
+   "name": "Participants",
+   "questions": [
+    "1.1",
+    "1.2"
+   ]
+  },
+  {
+   "id": "D2",
+   "name": "Predictors",
+   "questions": [
+    "2.1",
+    "2.2",
+    "2.3"
+   ]
+  },
+  {
+   "id": "D3",
+   "name": "Outcome",
+   "questions": [
+    "3.1",
+    "3.2",
+    "3.3",
+    "3.4",
+    "3.5",
+    "3.6"
+   ]
+  },
+  {
+   "id": "D4",
+   "name": "Analysis",
+   "questions": [
+    "4.1",
+    "4.2",
+    "4.3",
+    "4.4",
+    "4.5",
+    "4.6",
+    "4.7",
+    "4.8",
+    "4.9"
+   ]
+  }
+ ]
+}

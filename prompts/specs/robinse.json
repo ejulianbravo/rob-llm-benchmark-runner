@@ -1,0 +1,133 @@
+{
+ "instrument": "robinse",
+ "name": "ROBINS-E (24 March 2024)",
+ "answer_options": [
+  "Y",
+  "PY",
+  "PN",
+  "N",
+  "NI",
+  "NA",
+  "WN",
+  "SN",
+  "WY",
+  "SY"
+ ],
+ "judgement_options": [
+  "Low",
+  "Low (except for concerns about uncontrolled confounding)",
+  "Some concerns",
+  "High",
+  "Very high"
+ ],
+ "overall_options": [
+  "Low",
+  "Low (except for concerns about uncontrolled confounding)",
+  "Some concerns",
+  "High",
+  "Very high"
+ ],
+ "top_fields": {},
+ "domains": [
+  {
+   "id": "D1",
+   "name": "Risk of bias due to confounding",
+   "variants": {
+    "a": [
+     "1.1",
+     "1.2",
+     "1.3",
+     "1.4"
+    ],
+    "b": [
+     "1.1",
+     "1.2",
+     "1.3",
+     "1.4",
+     "1.5"
+    ]
+   }
+  },
+  {
+   "id": "D2",
+   "name": "Risk of bias arising from measurement of the exposure",
+   "variants": {
+    "a": [
+     "2.1",
+     "2.2",
+     "2.3",
+     "2.4"
+    ],
+    "b": [
+     "2.1",
+     "2.2",
+     "2.3",
+     "2.4"
+    ],
+    "c": [
+     "2.1",
+     "2.2",
+     "2.3",
+     "2.4"
+    ]
+   }
+  },
+  {
+   "id": "D3",
+   "name": "Risk of bias in selection of participants into the study (or into the analysis)",
+   "questions": [
+    "3.1",
+    "3.2",
+    "3.3",
+    "3.4",
+    "3.5",
+    "3.6",
+    "3.7"
+   ]
+  },
+  {
+   "id": "D4",
+   "name": "Risk of bias due to post-exposure interventions",
+   "questions": [
+    "4.1",
+    "4.2"
+   ]
+  },
+  {
+   "id": "D5",
+   "name": "Risk of bias due to missing data",
+   "questions": [
+    "5.1",
+    "5.2",
+    "5.3",
+    "5.4",
+    "5.5",
+    "5.6",
+    "5.7",
+    "5.8",
+    "5.9",
+    "5.10"
+   ]
+  },
+  {
+   "id": "D6",
+   "name": "Risk of bias arising from measurement of the outcome",
+   "questions": [
+    "6.1",
+    "6.2",
+    "6.3"
+   ]
+  },
+  {
+   "id": "D7",
+   "name": "Risk of bias in selection of the reported result",
+   "questions": [
+    "7.1",
+    "7.2",
+    "7.3",
+    "7.4",
+    "7.5"
+   ]
+  }
+ ]
+}

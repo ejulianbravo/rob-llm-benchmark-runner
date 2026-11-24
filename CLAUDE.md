@@ -34,8 +34,9 @@ Run tests: `Rscript -e 'testthat::test_dir("tests/testthat")'`
 
 ## Next steps
 
-1. Edward reviews the call functions (`R/`).
-2. Manual manifest and checked text extracts (kept outside git).
-3. Instrument prompts and output formats.
-4. Cost test on non-benchmark PDFs, after Edward approves the spend.
-5. Parser from raw responses to the assessment tables.
+1. Edward reviews the runner and the draft prompts.
+2. Decisions open (see the decision log): storing HTTP errors apart from outputs; timeout vs streaming or the providers' batch APIs; effect of interest when the target does not state it; NOS review criteria; directions of bias.
+3. Manual texts extracted, checked against the PDFs and recorded (`scripts/`).
+4. Development studies outside the benchmark (`dev_dir`), for prompt work and the cost test.
+5. Cost test on development PDFs, after Edward approves the spend; then replace the cost assumptions in `config/models.yaml` and fix model IDs.
+6. Freeze prompts (`status: frozen`), register, then benchmark runs.

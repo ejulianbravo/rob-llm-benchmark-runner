@@ -10,6 +10,14 @@ All changes to the runner are recorded here. Versions are git tags.
 - `config/models.yaml` with provisional model IDs (to be fixed after the cost test).
 - Offline tests (`tests/testthat/`) with mocked responses.
 - `CLAUDE.md` with working rules and design summary.
+- Batch runner (`R/run_batch.R`): plans every call still to make with a rough cost estimate; sends nothing unless `dry_run = FALSE` and an approved budget covers the estimate; refuses benchmark runs until prompts are frozen and manual texts checked; resumes by skipping calls already stored; run 1 completes before run 2.
+- Inputs (`R/inputs.R`): frozen studies table, PDF hash check, manuals from the manifest with text-hash check, prompts with version and status.
+- Instrument specs (`prompts/specs/`) and draft prompts (`prompts/`, version 0.1, status draft).
+- Manuals manifest with citations, editions, URLs and PDF hashes; scripts to extract and record checked texts.
+- Parser (`parse/parse_outputs.R`): one table per instrument in the schema's layout plus a quotations table; values kept as written, out-of-range values flagged; unreadable answers kept as rows.
+- Quotation check (`parse/check_quotes.R`) against text extracted from the same PDF.
+- Changes after review: HTTP error bodies go to `outputs/errors/` and do not use up the run number; token columns have one definition across providers, with the provider's usage record kept; Google prompt blocks recorded as finish reason; settings fixed in code recorded in the log; cache breakpoint moved after the instrument prompt; a hash per manual; raw file names include the model ID; lock per call; dry runs need no key; request size checked before sending; timeout default 1800 s.
+- Fixed: named manual vectors were serialised as a JSON object instead of an array.
 
 ## v0.1-concept (9 Dec 2025)
 

@@ -1,0 +1,10 @@
+version: 0.1
+status: draft
+---
+Task: assess the risk of bias and applicability of the prediction model named in the assessment target, using the original PROBAST (2019), as set out in the documents above.
+
+The assessment target, given after the study report, names the model, the outcome predicted, and the population and setting. Judge applicability against that target.
+
+For each of the 4 domains: first quote the passages of the report that bear on the domain, then answer the signalling questions, then give the risk-of-bias judgement, and for domains 1 to 3 the applicability judgement. Then give the overall risk-of-bias and overall applicability judgements following PROBAST.
+
+{{OUTPUT_FORMAT}}

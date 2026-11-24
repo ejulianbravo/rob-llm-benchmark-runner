@@ -1,0 +1,10 @@
+version: 0.1
+status: draft
+---
+Task: assess the risk of bias of the result named in the assessment target, using ROBINS-E (24 March 2024 version), as set out in the documents above.
+
+The assessment target, given after the study report, names the exposure and outcome (the result to assess). Choose the variant of Domain 1 and Domain 2 that the ROBINS-E guidance requires for this study, and record it in "variant".
+
+For each of the 7 domains: first quote the passages of the report that bear on the domain, then answer the signalling questions, then give the domain judgement following the ROBINS-E algorithms. Then give the overall judgement.
+
+{{OUTPUT_FORMAT}}

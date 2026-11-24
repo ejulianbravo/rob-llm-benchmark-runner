@@ -1,0 +1,93 @@
+{
+ "instrument": "rob2",
+ "name": "RoB 2 (22 August 2019), individually randomised parallel-group trials",
+ "answer_options": [
+  "Y",
+  "PY",
+  "PN",
+  "N",
+  "NI",
+  "NA"
+ ],
+ "judgement_options": [
+  "Low",
+  "Some concerns",
+  "High"
+ ],
+ "overall_options": [
+  "Low",
+  "Some concerns",
+  "High"
+ ],
+ "top_fields": {
+  "effect_of_interest": [
+   "assignment",
+   "adherence"
+  ]
+ },
+ "domains": [
+  {
+   "id": "D1",
+   "name": "Bias arising from the randomization process",
+   "questions": [
+    "1.1",
+    "1.2",
+    "1.3"
+   ]
+  },
+  {
+   "id": "D2",
+   "name": "Bias due to deviations from intended interventions",
+   "variant_from": "effect_of_interest",
+   "variants": {
+    "assignment": [
+     "2.1",
+     "2.2",
+     "2.3",
+     "2.4",
+     "2.5",
+     "2.6",
+     "2.7"
+    ],
+    "adherence": [
+     "2.1",
+     "2.2",
+     "2.3",
+     "2.4",
+     "2.5",
+     "2.6"
+    ]
+   }
+  },
+  {
+   "id": "D3",
+   "name": "Bias due to missing outcome data",
+   "questions": [
+    "3.1",
+    "3.2",
+    "3.3",
+    "3.4"
+   ]
+  },
+  {
+   "id": "D4",
+   "name": "Bias in measurement of the outcome",
+   "questions": [
+    "4.1",
+    "4.2",
+    "4.3",
+    "4.4",
+    "4.5"
+   ]
+  },
+  {
+   "id": "D5",
+   "name": "Bias in selection of the reported result",
+   "questions": [
+    "5.1",
+    "5.2",
+    "5.3"
+   ]
+  }
+ ]
+}

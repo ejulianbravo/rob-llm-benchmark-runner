@@ -1,0 +1,11 @@
+# Copy this file to config/paths.yaml (not committed) and set your local folders.
+
+# Frozen benchmark: the rob-llm-benchmark-pilot repo (data/ and fulltexts/)
+dataset_dir: ~/Projects/Claude/rob-llm-benchmark-pilot
+
+# Development studies outside the benchmark, same layout:
+#   data/<instrument>/studies_<instrument>.csv and fulltexts/<instrument>/<study_id>.pdf
+dev_dir: ~/Projects/Claude/rob-llm-dev-studies
+
+# Manual PDFs and their checked text files (names as in manuals/manifest.csv)
+manuals_dir: ~/Projects/Claude/rob-llm-manuals

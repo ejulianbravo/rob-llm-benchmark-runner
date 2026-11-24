@@ -10,6 +10,9 @@ manuals/*
 !manuals/manifest.csv
 data/
 
+# Local paths
+config/paths.yaml
+
 # Model outputs and run logs (kept locally and archived separately)
 outputs/
 
