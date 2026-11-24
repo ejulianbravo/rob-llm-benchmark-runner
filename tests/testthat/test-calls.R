@@ -52,7 +52,8 @@ fake <- list(
                 content = list(list(type = "thinking", thinking = "..."),
                                list(type = "text", text = "{\"ok\":true}")),
                 usage = list(input_tokens = 100, output_tokens = 200,
-                             cache_read_input_tokens = 900, cache_creation_input_tokens = 0)),
+                             cache_read_input_tokens = 900, cache_creation_input_tokens = 0,
+                             output_tokens_details = list(thinking_tokens = 150))),
   gpt = list(model = "gpt-6.2-astra", status = "completed",
              output = list(list(type = "reasoning"),
                            list(type = "message",
@@ -83,6 +84,7 @@ for (lab in names(fake)) {
     expect_true(file.exists(row$raw_file))
     expect_match(row$raw_file, models[[lab]]$model_id, fixed = TRUE)
     expect_equal(c(row$input_tokens, row$output_tokens), expected_tokens[[lab]])
+    expect_equal(row$reasoning_tokens, c(claude = 150, gpt = 100, gemini = 50)[[lab]])
     expect_identical(readBin(row$raw_file, "raw", 1e6),
                      charToRaw(as.character(jsonlite::toJSON(fake[[lab]], auto_unbox = TRUE))))
     expect_equal(response_text(models[[lab]]$provider, jsonlite::fromJSON(row$raw_file, simplifyVector = FALSE)),

@@ -39,7 +39,7 @@ response_meta <- function(provider, body) {
   meta <- switch(provider,
     anthropic = {
       # Anthropic's input_tokens EXCLUDES cache reads and writes; output_tokens
-      # INCLUDES thinking (not reported separately).
+      # INCLUDES thinking, reported separately in output_tokens_details.
       u <- body$usage
       list(model_returned = chr(body$model),
            finish_reason = chr(body$stop_reason),
@@ -48,7 +48,7 @@ response_meta <- function(provider, body) {
            cache_read_tokens = num(u$cache_read_input_tokens),
            cache_write_tokens = num(u$cache_creation_input_tokens),
            output_tokens = num(u$output_tokens),
-           reasoning_tokens = NA_real_)
+           reasoning_tokens = num(u$output_tokens_details$thinking_tokens))
     },
     openai = {
       # OpenAI's input_tokens INCLUDES cached tokens; output_tokens INCLUDES reasoning.
