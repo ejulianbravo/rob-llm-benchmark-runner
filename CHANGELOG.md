@@ -6,6 +6,9 @@ All changes to the runner are recorded here. Versions are git tags.
 
 - Moved the concept notebook and its files into `concept/`.
 - Added the runner layout (`R/`, `config/`, `prompts/`, `manuals/`, `parse/`), README and `.gitignore`.
+- Call functions (`R/`): one request builder per provider (Anthropic Messages API, OpenAI Responses API, Google generateContent); PDF sent as a file; manuals and instrument prompt placed first so providers can cache them; raw response saved unchanged and never overwritten; run log with model returned, tokens, cache use, timing and hashes of PDF, manuals, prompt and target.
+- `config/models.yaml` with provisional model IDs (to be fixed after the cost test).
+- Offline tests (`tests/testthat/`) with mocked responses.
 
 ## v0.1-concept (9 Dec 2025)
 

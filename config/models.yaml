@@ -1,0 +1,29 @@
+# One entry per model. PROVISIONAL: model IDs and settings are fixed in the
+# registered protocol after the cost test (decision log D123).
+#
+# params are sent unchanged: top level for Anthropic and OpenAI, inside
+# generationConfig for Google. Leave out any parameter a model does not accept
+# (e.g. temperature for claude-fable-5-2).
+
+models:
+  - label: claude
+    provider: anthropic
+    model_id: claude-fable-5-2
+    api_key_env: ANTHROPIC_API_KEY
+    max_output_tokens: 32000
+    cache_manuals: true
+    params: {}
+
+  - label: gpt
+    provider: openai
+    model_id: gpt-6.2-astra
+    api_key_env: OPENAI_API_KEY
+    max_output_tokens: 32000
+    params: {}
+
+  - label: gemini
+    provider: google
+    model_id: gemini-4-argon
+    api_key_env: GEMINI_API_KEY
+    max_output_tokens: 32000
+    params: {}
