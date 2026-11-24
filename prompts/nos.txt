@@ -5,6 +5,6 @@ Task: assess the study named in the assessment target with the original Newcastl
 
 The assessment target, given after the study report, names the comparison and the outcome (cohort form) or exposure (case-control form) to assess.
 
-For each item: first quote the passages of the report that bear on the item, then give the number of stars the scale awards. Do not give a total or an overall rating.
+Before rating, state the choices the scale leaves to the reviewer (in "review_choices"). Then, for each item: first quote the passages of the report that bear on the item, then give the number of stars the scale awards. Do not give a total or an overall rating.
 
 {{OUTPUT_FORMAT}}

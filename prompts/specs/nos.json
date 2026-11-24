@@ -42,5 +42,24 @@
    "max_stars": 1
   }
  ],
- "item_note": "S1-S4 = Selection items 1-4; C = Comparability (0-2 stars); OE1-OE3 = Outcome items 1-3 (cohort form) or Exposure items 1-3 (case-control form), in the order of the scale."
+ "item_note": "S1-S4 = Selection items 1-4; C = Comparability (0-2 stars); OE1-OE3 = Outcome items 1-3 (cohort form) or Exposure items 1-3 (case-control form), in the order of the scale.",
+ "choices": [
+  {
+   "id": "comparability_main_factor",
+   "text": "the factor you treated as the most important for comparability (first star)"
+  },
+  {
+   "id": "comparability_additional_factor",
+   "text": "the additional factor you used for the second comparability star"
+  },
+  {
+   "id": "followup_long_enough",
+   "text": "cohort form: the follow-up length you treated as long enough for the outcome to occur; case-control form: NA"
+  },
+  {
+   "id": "adequate_followup",
+   "text": "cohort form: the loss to follow-up you treated as still adequate; case-control form: NA"
+  }
+ ],
+ "choices_note": "The scale leaves these choices to the reviewer. Make them yourself from the study topic and the scale's guidance, state them here, and apply them consistently when awarding stars."
 }

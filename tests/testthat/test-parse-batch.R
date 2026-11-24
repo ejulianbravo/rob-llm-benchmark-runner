@@ -9,6 +9,7 @@ test_that("Every instrument prompt renders, with its output format and draft sta
     p <- load_prompts(i)
     expect_false(grepl("{{OUTPUT_FORMAT}}", p$prompt, fixed = TRUE))
     expect_match(p$prompt, "Return one JSON object")
+    if (i == "nos") expect_match(p$prompt, "review_choices")
     expect_false(p$frozen)
   }
 })
@@ -100,6 +101,8 @@ test_that("Parser: RoB 2 answer to columns; values kept as written; issues flagg
 test_that("Parser: NOS stars, PROBAST applicability, code fence, unreadable", {
   out <- withr::local_tempdir()
   nos <- list(instrument = "nos", form = "cohort",
+              review_choices = list(comparability_main_factor = "age", comparability_additional_factor = "severity",
+                                    followup_long_enough = "28 days", adequate_followup = ">80% followed"),
               items = lapply(c("S1","S2","S3","S4","C","OE1","OE2","OE3"), function(i)
                 list(item = i, evidence = list(), stars = if (i == "C") 2 else 1)))
   prob <- list(instrument = "probast",
@@ -117,6 +120,8 @@ test_that("Parser: NOS stars, PROBAST applicability, code fence, unreadable", {
   expect_equal(n$total_stars_calculated[n$study_id == "N1"], 9)
   expect_equal(n$parse_note[n$study_id == "N1"], "code_fence_removed")
   expect_equal(n$parse_status[n$study_id == "N2"], "unreadable")
+  expect_equal(n$choice_comparability_main_factor[n$study_id == "N1"], "age")
+  expect_equal(n$parse_status[n$study_id == "N1"], "read")
   p <- res$tables$probast
   expect_equal(p$d1_rob, "High"); expect_equal(p$d1_app, "Low"); expect_equal(p$overall_app, "Low")
   expect_null(p$d4_app)

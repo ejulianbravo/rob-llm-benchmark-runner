@@ -27,9 +27,13 @@ render_output_format <- function(spec) {
     items <- vapply(spec$items, function(it) {
       sprintf('    {"item": "%s", %s, "stars": <0 to %d>}', it$id, ev, it$max_stars)
     }, "")
-    body <- c("{", sprintf('  "instrument": "%s",', spec$instrument), top,
+    choices <- if (length(spec$choices)) {
+      ch <- vapply(spec$choices, function(x) sprintf('    "%s": "<%s>"', x$id, x$text), "")
+      c('  "review_choices": {', paste(ch, collapse = ",\n"), "  },")
+    } else character()
+    body <- c("{", sprintf('  "instrument": "%s",', spec$instrument), top, choices,
               '  "items": [', paste(items, collapse = ",\n"), "  ]", "}")
-    notes <- c(spec$item_note, "Give every item, in this order.")
+    notes <- c(spec$item_note, spec$choices_note, "Give every item, in this order.")
   } else {
     doms <- vapply(spec$domains, function(d) {
       variant_line <- if (!is.null(d$variants) && is.null(d$variant_from)) {

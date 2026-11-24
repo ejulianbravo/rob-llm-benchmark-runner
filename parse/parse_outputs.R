@@ -44,6 +44,11 @@ answer_row <- function(ans, spec) {
     if (!is.na(out[[f]]) && !out[[f]] %in% unlist(spec$top_fields[[f]])) issues <- c(issues, paste0("unexpected_", f))
   }
 
+  for (ch in spec$choices %||% list()) {
+    out[[paste0("choice_", ch$id)]] <- val_chr(ans$review_choices[[ch$id]])
+    if (is.na(out[[paste0("choice_", ch$id)]])) issues <- c(issues, paste0("missing_choice_", ch$id))
+  }
+
   if (identical(spec$unit, "item")) {
     got <- ans$items %||% list()
     by_id <- stats::setNames(got, vapply(got, function(x) val_chr(x$item), ""))
