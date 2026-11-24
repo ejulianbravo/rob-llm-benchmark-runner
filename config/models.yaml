@@ -3,7 +3,8 @@
 #
 # params are sent unchanged: top level for Anthropic and OpenAI, inside
 # generationConfig for Google. Leave out any parameter a model does not accept
-# (e.g. temperature for claude-fable-5-2).
+# (e.g. temperature for claude-fable-5-2). Effort / reasoning / thinking levels
+# set to "high" for all three models: PROPOSAL, awaiting Edward.
 #
 # Cost estimate fields (used only by R/estimate_cost.R, never sent):
 #   price_*_usd_per_m       list price per million tokens (checked 2026-11-20, D123)
@@ -17,10 +18,12 @@ models:
     provider: anthropic
     model_id: claude-fable-5-2
     api_key_env: ANTHROPIC_API_KEY
-    max_output_tokens: 32000
+    max_output_tokens: 64000      # covers thinking + answer; model max 128K (checked 2026-11-23)
     timeout_s: 1800
     cache_manuals: true
-    params: {}
+    params:                       # temperature not accepted by this model (D123)
+      output_config:
+        effort: high              # API default is high; levels low/medium/high/xhigh/max
     price_input_usd_per_m: 8
     price_output_usd_per_m: 40
     pdf_tokens_per_page: 2500
@@ -31,9 +34,11 @@ models:
     provider: openai
     model_id: gpt-6.2-astra
     api_key_env: OPENAI_API_KEY
-    max_output_tokens: 32000
+    max_output_tokens: 64000      # includes reasoning tokens; model max 128K, max input 922K (checked 2026-11-23)
     timeout_s: 1800
-    params: {}
+    params:
+      reasoning:
+        effort: high              # levels low/medium/high/xhigh/max; "none" is rejected
     price_input_usd_per_m: 8
     price_output_usd_per_m: 40
     pdf_tokens_per_page: 2500
@@ -44,10 +49,12 @@ models:
     provider: google
     model_id: gemini-4-argon
     api_key_env: GEMINI_API_KEY
-    max_output_tokens: 32000
+    max_output_tokens: 32768      # non-streaming REST ceiling; shared 1M window for input + thinking + output (checked 2026-11-23)
     timeout_s: 1800
-    params: {}
-    price_input_usd_per_m: 4
+    params:
+      thinkingConfig:
+        thinkingLevel: high       # required for Gemini 4; levels low/medium (default)/high
+    price_input_usd_per_m: 4      # $2/$10 introductory price ends 30 Nov 2026
     price_output_usd_per_m: 20
     pdf_tokens_per_page: 600
     expected_output_tokens: 8000
