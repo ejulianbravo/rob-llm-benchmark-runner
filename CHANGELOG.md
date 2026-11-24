@@ -21,6 +21,7 @@ All changes to the runner are recorded here. Versions are git tags.
 - PDF text now extracted in reading order with poppler's pdftotext (`pdf_pages_text()`), for the manuals and the quotation check; pdftools kept the page layout and mixed the lines of two-column pages.
 - Manuals are now sent as the official PDF files, hash-checked against the manifest, instead of extracted text: in the text, tables lost their structure, algorithm figures were lost and the NOS star symbol was garbled. Manifest reduced to PDF columns; the text extraction and check scripts removed. Cost estimate counts manual pages.
 - Model settings checked against provider documentation (2026-11-23): output limits raised (64K Claude and GPT, 32,768 Gemini non-streaming); reasoning level set to high for all three (proposal); no temperature sent. All three models have about 1M tokens of context; Anthropic allows up to 600 PDF pages per request at that context size.
+- `scripts/cost_test.R`: plans the cost test (one development study per instrument, all models, run 1), sends only with `--run` and within US$30, then reports tokens, timing, parse status and cost from returned tokens.
 - Fixed: named manual vectors were serialised as a JSON object instead of an array.
 
 ## v0.1-concept (9 Dec 2025)
