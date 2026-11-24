@@ -1,0 +1,24 @@
+# Secrets
+.Renviron
+.env
+*.key
+
+# Inputs that are not ours to redistribute
+*.pdf
+manuals/*
+!manuals/README.md
+!manuals/manifest.csv
+data/
+
+# Model outputs and run logs (kept locally and archived separately)
+outputs/
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+renv/library/
+renv/staging/
+
+# OS
+.DS_Store
